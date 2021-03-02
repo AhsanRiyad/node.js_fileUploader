@@ -7,6 +7,21 @@ const app = express();
 const port = 3000;
 
 
+const multer = require('multer');
+const upload = multer();
+
+
+app.post('/profile', upload.none(), function (req, res, next) {
+    // req.body contains the text fields
+    res.status(200).json({
+        status: 'ok'
+    })
+})
+
+
+
+
+
 //setting file uploader
 app.use(fileUpload());
 
