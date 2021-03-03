@@ -55,7 +55,6 @@ app.use(function (req, res, next) {
     next();
 });
 
-
 // EJS
 app.set('view engine', 'ejs');
 
@@ -73,7 +72,8 @@ app.post('/upload', (req, res) => {
             if (req.file == undefined) {
                 res.send('error');
             } else {
-                res.send(req.file.path);
+                // res.send(req.file.path);
+                res.send(req.file.filename);
             }
         }
     });
