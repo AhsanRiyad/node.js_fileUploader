@@ -5,6 +5,15 @@ const multer = require('multer');
 const ejs = require('ejs');
 const path = require('path');
 
+
+// Allow cross origin resource sharing (CORS) within our application
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
+
 // Set The Storage Engine
 const storage = multer.diskStorage({
     destination: './public/uploads/',
