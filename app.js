@@ -4,28 +4,25 @@ const express = require('express');
 const multer = require('multer');
 const ejs = require('ejs');
 const path = require('path');
+const uuid = require('uuid');
 
 
-// Allow cross origin resource sharing (CORS) within our application
-app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
+
 
 
 // Set The Storage Engine
 const storage = multer.diskStorage({
     destination: './public/uploads/',
     filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+        // cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+        cb(null, file.fieldname + '-' + uuid.v4() + path.extname(file.originalname));
     }
 });
 
 // Init Upload
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 100000 },
+    limits: { fileSize: 10000000000000 },
     fileFilter: function (req, file, cb) {
         checkFileType(file, cb);
     }
@@ -50,6 +47,15 @@ function checkFileType(file, cb) {
 // Init app
 const app = express();
 
+
+// Allow cross origin resource sharing (CORS) within our application
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
+
 // EJS
 app.set('view engine', 'ejs');
 
@@ -67,7 +73,7 @@ app.post('/upload', (req, res) => {
             if (req.file == undefined) {
                 res.send('error');
             } else {
-                res.send('file uploaded');
+                res.send(req.file.path);
             }
         }
     });
