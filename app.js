@@ -9,9 +9,9 @@ let fs = require('fs-extra');
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
         let path = 
-        req.url == 'image_upload' ? `./public/uploads/image` :
-        req.url == 'zip_upload' ? `./public/uploads/zip` :
-        req.url == 'video_upload' ? `./public/uploads/video` :
+        req.url == '/image_upload' ? `./public/uploads/image` :
+        req.url == '/zip_upload' ? `./public/uploads/zip` :
+        req.url == '/video_upload' ? `./public/uploads/video` :
         '';
         fs.mkdirsSync(path);
         callback(null, path);
