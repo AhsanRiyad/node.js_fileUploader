@@ -1,64 +1,69 @@
+
+
 const express = require('express');
-const bodyParser = require('body-parser');
-const fileUpload = require('express-fileupload');
- 
-
-const app = express();
-const port = 3000;
-
-
 const multer = require('multer');
-const upload = multer();
+const ejs = require('ejs');
+const path = require('path');
 
-
-app.post('/profile', upload.none(), function (req, res, next) {
-    // req.body contains the text fields
-    res.status(200).json({
-        status: 'ok'
-    })
-})
-
-
-
-
-
-//setting file uploader
-app.use(fileUpload());
-
-
-//setting body parser
-app.use(bodyParser.urlencoded({ extended: true }));
-
-//static resource
-app.use('/lib/img', express.static(__dirname + '/lib/img/'));
-
-
-app.get('/', (req, res)=>{
-    res.status(200).json({
-        status: 'ok'
-    }) 
+// Set The Storage Engine
+const storage = multer.diskStorage({
+    destination: './public/uploads/',
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
 });
 
-
-app.post('/upload', function (req, res) {
-    if (!req.files || Object.keys(req.files).length === 0) {
-        return res.status(400).send('No files were uploaded.');
+// Init Upload
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 100000 },
+    fileFilter: function (req, file, cb) {
+        checkFileType(file, cb);
     }
+}).single('myImage');
 
-    // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
-    let sampleFile = req.files.sampleFile;
+// Check File Type
+function checkFileType(file, cb) {
+    // Allowed ext
+    const filetypes = /jpeg|jpg|png|gif/;
+    // Check ext
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    // Check mime
+    const mimetype = filetypes.test(file.mimetype);
 
-    // Use the mv() method to place the file somewhere on your server
-    sampleFile.mv('/somewhere/on/your/server/filename.jpg', function (err) {
-        if (err)
-            return res.status(500).send(err);
+    if (mimetype && extname) {
+        return cb(null, true);
+    } else {
+        cb('Error: Images Only!');
+    }
+}
 
-        res.send('File uploaded!');
+// Init app
+const app = express();
+
+// EJS
+app.set('view engine', 'ejs');
+
+// Public Folder
+app.use(express.static('./public'));
+
+app.get('/', (req, res) => res.render('index'));
+
+app.post('/upload', (req, res) => {
+    upload(req, res, (err) => {
+        if (err) {
+            console.log('if err' ,  err);
+            res.send(err.code);
+        } else {
+            if (req.file == undefined) {
+                res.send('error');
+            } else {
+                res.send('file uploaded');
+            }
+        }
     });
 });
 
+const port = 3000;
 
-
-
-//SERVER STARTUP
-app.listen(port, () => console.log('server started at port ' + port));
+app.listen(port, () => console.log(`Server started on port ${port}`));
