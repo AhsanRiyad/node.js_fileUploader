@@ -127,17 +127,17 @@ app.delete('/file/:name', (req, res) => {
 
 app.get('/file/:name', (req, res) => {
     console.log(req.params.name);
-    var filePath = path.join(__dirname, 'public/uploads/zip/file-e5a6992e-df7e-4c80-bfcd-5f4b82b5dbc0.zip');
-    var stat = fileSystem.statSync(filePath);
+    let filePath = path.join(__dirname, 'public/uploads/zip/videoplayback.webm');
+    let stat = file.statSync(filePath);
 
-    response.writeHead(200, {
-        'Content-Type': 'audio/mpeg',
+    res.writeHead(200, {
+        'Content-Type': 'video/webm',
         'Content-Length': stat.size
     });
 
-    var readStream = fileSystem.createReadStream(filePath);
+    let readStream = file.createReadStream(filePath);
     // We replaced all the event handlers with a simple call to readStream.pipe()
-    readStream.pipe(response);
+    readStream.pipe(res);
 });
 
 
