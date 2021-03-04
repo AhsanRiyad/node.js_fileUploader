@@ -4,6 +4,7 @@ const ejs = require('ejs');
 const path = require('path');
 const uuid = require('uuid');
 let fs = require('fs-extra');
+let file = require('fs');
 
 // Set The Storage Engine
 const storage = multer.diskStorage({
@@ -103,6 +104,43 @@ app.post(['/image_upload' , '/zip_upload' , '/video_upload'], (req, res) => {
         }
     });
 });
+
+app.delete('/file/:name', (req, res) => {
+    console.log(req.params.name);
+    let extention1 = req.params.name.slice(-3);
+    let extention2 = req.params.name.slice(-4);
+    let folderPath = './public/uploads/zip/';
+    if(extention1 == 'zip' ){
+        folderPath = './public/uploads/zip/';
+    } else if (extention1 == 'jpg' || extention2 == 'jpeg' || extention1 == 'png' || extention1 == 'gif' ){
+        folderPath = './public/uploads/image/';
+    } else if (extention1 == 'mkv' || extention1 == 'mp4' || extention1 == 'mov' || extention1 == 'wmv' || extention1 == 'flv' || extention1 == 'webm' || extention2 == 'mkv'){
+        folderPath = './public/uploads/video/';
+    };
+
+    file.unlink(`${folderPath}${req.params.name}`, function (err) {
+        console.log('deleted');
+    });
+});
+
+
+
+app.get('/file/:name', (req, res) => {
+    console.log(req.params.name);
+    var filePath = path.join(__dirname, 'public/uploads/zip/file-e5a6992e-df7e-4c80-bfcd-5f4b82b5dbc0.zip');
+    var stat = fileSystem.statSync(filePath);
+
+    response.writeHead(200, {
+        'Content-Type': 'audio/mpeg',
+        'Content-Length': stat.size
+    });
+
+    var readStream = fileSystem.createReadStream(filePath);
+    // We replaced all the event handlers with a simple call to readStream.pipe()
+    readStream.pipe(response);
+});
+
+
 
 const port = 3000;
 
