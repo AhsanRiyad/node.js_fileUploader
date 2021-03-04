@@ -28,7 +28,7 @@ const storage = multer.diskStorage({
 // Init Upload
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 10000000000000000000000000 },
+    limits: { fileSize: 10000 },
     fileFilter: function (req, file, cb) {
         checkFileType(req, file, cb);
     }
@@ -118,7 +118,7 @@ fileUpload.route('/file/:name').get( (req, res) => {
     } else if (extention1 == 'jpg' || extention1 == 'png' || extention1 == 'gif') {
         folderPath = '../public/uploads/image/';
         ContentType = `image/${extention1}`;
-    } else if (extention1 == 'mkv' || extention1 == 'mp4' || extention1 == 'mov' || extention1 == 'wmv' || extention1 == 'flv' ||  extention1 == 'mkv') {
+    } else if (extention1 == 'mkv' || extention1 == 'mp4' || extention1 == 'mov' || extention1 == 'wmv' || extention1 == 'flv') {
         folderPath = '../public/uploads/video/';
         ContentType = `video/${extention1}`;
     };
